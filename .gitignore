@@ -1,0 +1,12 @@
+.DS_Store
+_*
+ner_v1/*
+bucket_data/*
+.idea
+venv
+/01_get_api_ads.py
+.Rproj.user
+*.Rproj
+/.drake/
+/.rstudio/
+/.config/

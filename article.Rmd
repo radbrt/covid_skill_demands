@@ -1,0 +1,100 @@
+---
+title: "Job skill demand during covid"
+author: "Henning Holgersen"
+date: "8/30/2020"
+output: html_document
+---
+
+```{r setup, echo=FALSE, include=FALSE}
+library(tidyverse)
+library(feather)
+library(drake)
+library(gt)
+
+```
+
+
+## Introduction
+
+The large changes to work life after the COVID19-outbreak has sparked speculation that employers are changing their requirements when hiring. We explore two such hypothesis using job advertisements and natural language processing.
+
+One hypothesis is that employers are valuing digital skills more than before, because working from home adds to the digital toolset required for most office jobs. This hypothesis is intuitive, but not immune to counter arguments. The stack of digital tools required for most workers is large, ranging from standard office-tools (word, excel etc) to highly specialized applications. The video conferencing solutions needed to communicate with colleagues from home might not be a significant obstacle on top of the existing requirements.
+
+The second hypothesis is that employers place higher emphasis on interpersonal skills, as working from home is taxing on communication. Good communication and cooperation skills become more important when interactions can't happen face to face.
+
+
+## Methodology
+
+We attempt to estimate skill by training a machine learning model to recognize different types of skills in text. This technique is known as named entity recognition (NER) and has made big strides in recent years, to the point that it is now feasible to train a bespoke model with a high degree of accuracy.
+
+The model is used to predict the number of mentions of the relevant skills in each job ad. This measure, the number of words in each ad, and relevant information from the business register comprises the necessary data for the analysis.
+
+We have limited our analysis ads that are likely norwegian, as the NER-model is for norwegian language.
+
+
+## Data
+
+The dataset used is job ads from 2018 (well before the outbreak) and june-august 2020 (after the outbreak). The data is combined with the business register, in order to know the industry (nace) of the companies (business units) advertising.
+
+
+
+
+## Analysis
+
+The pandemic has caused large shifts in hiring - some sectors hardly advertise anymore, others are near unaffected and some are even facing an upswing in demand. Because of these shifts, adjusting for the type of job advertised is essential in order to get a reliable estimate. If, as an example, bars, hotels and other companies in the hospitality business typically emphasize interpersonal skills when hiring are facing economic crisis, we would expect mentions of interpersonal skills to go down on average. Since we are focused on how job requirements change for specific occupations, we need to correct for this hiring bias.
+
+Ideally we would use occupational codes (such as ISCO) to correct for this. For the moment we don't have access to ISCO annotations, and we use industry following the NACE-07 specification as a proxy.
+
+Using this industry measure, our hypothesis is that the ratio of mentions of the skills of interest increases from 2018 to 2020.
+
+
+### Interpersonal skills
+
+The entity "interpersonal skills" comprises mentions of cooperation, teamwork, communication and more. The term "cooperation" is so prevalent that the results might have been broadly similar simply with a keyword search instead of a NLP model. Still, the model is able to pick up many other terms, including some more esoteric ones. Secondly, the model can understand context, so mentions of cooperation that are not referring to desired skills of the applicants (such as institutions cooperating) can be excluded with an acceptable accuracy.
+
+```{r pferd_histogram}
+
+loadd(jobs)
+
+jobs %>% 
+  ggplot(aes(num_pferd)) +
+  geom_histogram(bins = max(jobs$num_pferd)) +
+  xlab("Skills per ad") +
+  ggtitle("Number of interpersonal skills mentioned per ad") +
+  theme_bw()
+
+
+```
+
+A good number of ads do not mention interpersonal skills, while most make 1-3 mentions. We do not know wether these mentions are referring to different types of interpersonal skills, in large parts because we have no taxonomy of personal skills. We will return to this question in a later chapter.
+
+```{r}
+
+unique(jobs$year_y)
+
+  jobs %>% 
+    group_by(year_y, label) %>% 
+    summarize(n_ads = n(),
+              n_personal_skills = sum(num_pferd)) %>% 
+    gt()
+```
+
+
+From the summary table it is difficult to discern a trend, but we can note that 2020 contains a lot fewer job ads - for two reasons:
+
+- The 2020-data covers june-august, while the 2018-data covers the entire year
+- Due to the economic downturn, there are naturally fewer jobs available in 2020
+
+Since we are comparing ratios, the number of ads should be of little importance.
+
+
+### IT skills
+
+
+## Conclusions
+
+
+
+
+
+

@@ -1,0 +1,24 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/github.com/radbrt/covidskills:$SHORT_SHA', '-t', 'gcr.io/$PROJECT_ID/github.com/radbrt/covidskills:latest', '.' ]
+  timeout: 3600s
+- name: 'gcr.io/$PROJECT_ID/github.com/radbrt/covidskills:$SHORT_SHA'
+  args: ['Rscript', 'make_drake.R']
+
+artifacts:
+  objects:
+    location: 'gs://com_radbrt_covidskills/'
+    paths: ['article.html']
+
+
+images:
+  - 'gcr.io/$PROJECT_ID/github.com/radbrt/covidskills:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/github.com/radbrt/covidskills:latest'
+
+options:
+  machineType: 'N1_HIGHCPU_8'
+
+timeout: 3600s
+
+tags:
+  - "covidskills"
