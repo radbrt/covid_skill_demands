@@ -70,10 +70,8 @@ A good number of ads do not mention interpersonal skills, while most make 1-3 me
 
 ```{r}
 
-unique(jobs$year_y)
-
   jobs %>% 
-    group_by(year_y, label) %>% 
+    group_by(year, label) %>% 
     summarize(n_ads = n(),
               n_personal_skills = sum(num_pferd)) %>% 
     gt()
