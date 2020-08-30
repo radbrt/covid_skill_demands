@@ -27,12 +27,11 @@ library(drake)
 # make(plan)
 
 load_jobs_data <- function() {
-  jobs <- read_feather('bucket_data/jobs_er.feather') %>% 
-    filter(year_y %in% c(2018, 2020)) %>% 
+  jobs <- read_feather('data/jobs_small.feather') %>% 
+    filter(year %in% c(2018, 2020)) %>% 
     filter(lang=='no') %>% 
     filter(label!= 'Lønnet arbeid i private husholdninger') %>% 
     filter(label!='Internasjonale organisasjoner og organer') %>% 
-    mutate(num_words = length(strsplit(description, " ")) ) %>% 
     mutate(avg_pferd = 1000*num_pferd/num_words)
   
   jobs

@@ -84,4 +84,4 @@ jobs_er['code'] = jobs_er['nkode1'].str[:2]
 jobs_er_nace = pd.merge(jobs_er, nace, on='code')
 
 jobs_er_nace.to_feather('bucket_data/jobs_er.feather')
-jobs_er_nace[['employer_orgnr', 'num_pferd', 'nkode1', 'num_words']].to_feather('data/jobs_small.feather')
+jobs_er_nace[['employer_orgnr', 'num_pferd', 'nkode1', 'num_words', 'year', 'lang', 'label', 'statistikk_aar_mnd']].to_feather('data/jobs_small.feather')
