@@ -2,39 +2,14 @@ library(tidyverse)
 library(feather)
 library(drake)
 
-# make_plot_data <- function(infile, dsname) {
-#   load('wfh.RData')
-#   
-#   wfh %>% 
-#     mutate(aar = as.numeric(substr(statistikk_aar_mnd, 1, 4)),
-#            antall_stillinger = as.numeric(antall_stillinger),
-#            wfh = as.numeric(wfh)) %>% 
-#     group_by(aar) %>% 
-#     summarize(antall_stillinger = sum(antall_stillinger, na.rm=T), antall_remote = sum(wfh, na.rm=T)) %>%
-#     mutate(andel_stillinger = 100*(antall_remote/antall_stillinger))
-# }
-# 
-# 
-# plan <- drake_plan(
-#   wfh_plot_data = make_plot_data('wfh.RData', 'wfh'),
-#   report = rmarkdown::render(
-#     knitr_in("new_sources.Rmd"),
-#     output_file = file_out("new_sources.pdf"),
-#     quiet = TRUE
-#   )
-# )
-# 
-# make(plan)
 
 load_jobs_data <- function() {
-  jobs <- read_feather('data/jobs_small.feather') %>% 
-    filter(year %in% c(2018, 2020)) %>% 
-    filter(lang=='no') %>% 
-    filter(label!= 'Lønnet arbeid i private husholdninger') %>% 
-    filter(label!='Internasjonale organisasjoner og organer') %>% 
-    mutate(avg_pferd = 1000*num_pferd/num_words)
-  
-  jobs
+  read_feather('data/jobs_small.feather') %>% 
+      filter(year %in% c(2018, 2020)) %>% 
+      filter(lang=='no') %>% 
+      filter(label!= 'Lønnet arbeid i private husholdninger') %>% 
+      filter(label!='Internasjonale organisasjoner og organer') %>% 
+      mutate(avg_pferd = 1000*num_pferd/num_words)
 }
 
 
@@ -43,12 +18,12 @@ plan <- drake_plan(
   jobs = load_jobs_data(),
   report = rmarkdown::render(
     knitr_in("article.Rmd"),
-    output_file = file_out("article.html"),
-    quiet = TRUE
+    output_file = file_out("article.html")
   )
 )
 
-make(plan)
+# lock_envir=FALSE is not recommended, but needed because of some gt() funnybusiness.
+make(plan, lock_envir = FALSE)
 
 # 
 # 
