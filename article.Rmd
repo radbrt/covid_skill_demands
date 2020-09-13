@@ -88,8 +88,68 @@ From the summary table it is difficult to discern a trend, but we can note that 
 
 Since we are comparing ratios, the number of ads should be of little importance.
 
+We do a simple paired t-test to test our hypothesis that mentions of interpersonal skills have increased, simply comparing the average number of mentions by industry. The number of mentions are adjusted for number of words in ad, so that any systematic variations in ad length is corrected for.
+
+```{r}
+jobs %>% 
+  group_by(year, label) %>%
+  summarize(avg_pferd = log(mean(num_pferd))) %>%
+  ungroup() %>% 
+  pivot_wider( names_from = year, values_from=avg_pferd) -> pferd_tpairs
+
+
+pferdmentions_2018 <- pferd_tpairs[['2018']]
+pferdmentions_2020 <- pferd_tpairs[['2020']]
+
+wilcox.test(x=pferdmentions_2018, y=pferdmentions_2020, paired = TRUE, alternative = "greater")
+
+```
 
 ### IT skills
+
+The analysis of IT skills follow the same pattern, but the interpretation may differ as there is a competing hypothesis that we aren't able to test for using the data at hand: As our society becomes more digital, IT skills become more in demand. At the same time, IT skills may be taken for granted andno longer mentioned in the ads.
+
+```{r itferd_histogram}
+
+jobs %>% 
+  ggplot(aes(num_itferd)) +
+  geom_histogram(bins = max(jobs$num_itferd)) +
+  xlab("Skills per ad") +
+  ggtitle("Number of IT skills mentioned per ad") +
+  theme_bw()
+
+
+```
+
+
+```{r itskills_table_summary}
+
+
+jobs %>% 
+    group_by(year, label) %>% 
+    summarize(n_ads = n(),
+              n_it_skills = sum(num_itferd)) %>% 
+    gt()
+```
+
+
+```{r}
+
+jobs %>% 
+  group_by(year, label) %>%
+  summarize(avg_itferd = log(mean(num_itferd))) %>%
+  ungroup() %>% 
+  pivot_wider( names_from = year, values_from=avg_itferd) -> itferd_tpairs
+
+itferdmentions_2018 <- itferd_tpairs[['2018']]
+itferdmentions_2020 <- itferd_tpairs[['2020']]
+
+wilcox.test(x=itferdmentions_2018, y=itferdmentions_2020, paired = TRUE, alternative = "greater")
+
+```
+
+IT skills are mentioned more frequently in 2020 than in 2018, but there may be underlying factors. We can with some certainty rule out the theory that IT skills are becoming too trivial to mention, but it would be premature to conclude that any of this has to do with COVID and working from home.
+
 
 
 ## Conclusions

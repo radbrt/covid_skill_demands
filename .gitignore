@@ -1,6 +1,8 @@
 .DS_Store
 _*
 ner_v1/*
+ner_v2/*
+.Rhistory
 bucket_data/*
 .idea
 venv

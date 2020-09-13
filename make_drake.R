@@ -9,7 +9,8 @@ load_jobs_data <- function() {
       filter(lang=='no') %>% 
       filter(label!= 'Lønnet arbeid i private husholdninger') %>% 
       filter(label!='Internasjonale organisasjoner og organer') %>% 
-      mutate(avg_pferd = 1000*num_pferd/num_words)
+      mutate(avg_pferd = 1000*num_pferd/num_words,
+             avg_itferd = 1000*num_itferd/num_words)
 }
 
 

@@ -6,6 +6,7 @@ import os
 import langdetect
 
 nlp = spacy.load('ner_v1')
+nlp_v2 = spacy.load('ner_v2')
 
 def get_num_entitites(text, enttype, max_len=4000, model=nlp):
 
@@ -77,6 +78,7 @@ jobs_er = pd.merge(er, jobs, left_on='orgnr', right_on='employer_orgnr')
 jobs_er['raw_text'] = jobs_er['description'].swifter.apply(lambda x: get_raw_text(x))
 jobs_er['lang'] = jobs_er['raw_text'].swifter.apply(lambda x: get_language_from_raw(x))
 jobs_er['num_pferd'] = jobs_er['raw_text'].swifter.apply(lambda x: get_num_entitites_from_raw(x, 'PFERD'))
+jobs_er['num_itferd'] = jobs_er['raw_text'].swifter.apply(lambda x: get_num_entitites_from_raw(x, 'ITFERD'))
 jobs_er['num_words'] = jobs_er['raw_text'].swifter.apply(lambda x: get_num_words(x))
 jobs_er['code'] = jobs_er['nkode1'].str[:2]
 
